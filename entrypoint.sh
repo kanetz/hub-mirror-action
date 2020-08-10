@@ -61,7 +61,7 @@ else
 fi
 
 if [[ -z $STATIC_LIST ]]; then
-  SRC_REPOS=`curl $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
+  SRC_REPOS=`curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 $SRC_REPO_LIST_API | jq '.[] | .name' |  sed 's/"//g'`
 else
   SRC_REPOS=`echo $STATIC_LIST | tr ',' ' '`
 fi
@@ -90,12 +90,12 @@ function cd_src_repo
 function add_remote_repo
 {
   # Auto create non-existing repo
-  has_repo=`curl $DST_REPO_LIST_API | jq '.[] | select(.full_name=="'$DST_ACCOUNT'/'$1'").name' | wc -l`
+  has_repo=`curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 $DST_REPO_LIST_API | jq '.[] | select(.full_name=="'$DST_ACCOUNT'/'$1'").name' | wc -l`
   if [ $has_repo == 0 ]; then
     if [[ "$DST_TYPE" == "github" ]]; then
-      curl -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API
+      curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API
     elif [[ "$DST_TYPE" == "gitee" ]]; then
-      curl -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'
+      curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'
     fi
   fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
