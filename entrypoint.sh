@@ -95,7 +95,7 @@ function add_remote_repo
     if [[ "$DST_TYPE" == "github" ]]; then
       curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 -H "Authorization: token $2" --data '{"name":"'$1'"}' $DST_REPO_CREATE_API
     elif [[ "$DST_TYPE" == "gitee" ]]; then
-      curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","access_token": "'$2'"}'
+      curl --connect-timeout 30 --speed-time 30 --speed-limit 1000 -X POST --header 'Content-Type: application/json;charset=UTF-8' $DST_REPO_CREATE_API -d '{"name": "'$1'","public": 1,"access_token": "'$2'"}'
     fi
   fi
   git remote add $DST_TYPE git@$DST_TYPE.com:$DST_ACCOUNT/$1.git
